@@ -43,7 +43,7 @@ Passenger initPassenger(int id, char *name)
 
 void print_passenger(Passenger passenger)
 {
-    printf("#%d: Passenger name - %s -\n", passenger.id, passenger.name);
+    printf(" #%d: Passenger name ' %s '\n", passenger.id, passenger.name);
 }
 
 // 2- Queues:
@@ -118,7 +118,7 @@ void print_queue(Queue q)
         qALT.Head = q.Head->next;
         qALT.Tail = q.Tail;
         print_queue(qALT);
-        printf("Passenger name - %s -\n", q.Head->name);
+        print_passenger(*(q.Head));
     }
 }
 
@@ -187,7 +187,7 @@ void print_stack(stack s)
     else
     {
         print_stack(s->next);
-        printf("#%d: Passenger name - %s  -\n", s->id, s->name);
+        print_passenger(*s);
     }
 }
 
@@ -248,15 +248,30 @@ void finish_passenger_check_in(Flight *flight)
 
 void print_flight(Flight flight)
 {
-    printf("-- Flight #%d --\n", flight.id);
-    printf("ID: %d\n", flight.id);
-    printf("Destination: %s\n", &flight.destination);
-    printf("Capacity: %d\n", flight.capacity);
-    printf("Number of pasengers: %d\n", flight.passengerCount);
-    printf("Passengers of the waiting queue: \n");
-    print_queue(flight.waitingQueue);
-    printf("Boarded Passengers: \n");
-    print_stack(flight.boardedPassengers);
+    printf("Flight #%d -------\n", flight.id);
+    printf(" ID: %d\n", flight.id);
+    printf(" Destination: %s\n", &flight.destination);
+    printf(" Capacity: %d\n", flight.capacity);
+    printf(" Number of pasengers: %d\n", flight.passengerCount);
+    printf(" Passengers of the waiting queue: \n");
+    if (isEmpty(flight.waitingQueue))
+    {
+        printf(" Empty\n");
+    }
+    else
+    {
+        print_queue(flight.waitingQueue);
+    }
+
+    printf(" Boarded Passengers: \n");
+    if (isEmpty_stack(flight.boardedPassengers))
+    {
+        printf(" Empty\n");
+    }
+    else
+    {
+        print_stack(flight.boardedPassengers);
+    }
 }
 
 int find_passenger(Flight flight, int passengerID)
@@ -304,9 +319,6 @@ int main(int argc, char const *argv[])
     Flight *f;
 
     printf(" --\tWelcome to Airport Management System\t--\n\n");
-
-    // printf("- How many flights are available for Today: \t");
-    // scanf("%d", &flightsCount);
 
     char *condFlight = "";
 
@@ -384,6 +396,7 @@ int main(int argc, char const *argv[])
     {
         printf("\n\n------------------------------------------------------\n\n");
 
+        printf("Adding 5 passengers for the Flight #%d queue ... \n", f[k].id);
         for (int i = k * 5; i < 5 * (k + 1); i++)
         {
             addPassengerToFlightQueue(&f[k], p + i);
@@ -396,6 +409,7 @@ int main(int argc, char const *argv[])
 
         // Check in for each passenger
 
+        printf("Finish 5 passengers chack-in for the Flight #%d ... \n", f[k].id);
         for (int o = k * 5; o < 5 * (k + 1); o++)
         {
             finish_passenger_check_in(&f[k]);
@@ -434,31 +448,40 @@ int main(int argc, char const *argv[])
 
         Flight exitedFlight;
 
-        while (index < flightsCount && (f + index)->id != flightID)
+        // while (index < flightsCount && f[index].id != flightID)
+        // {
+        //     index++;
+        // }
+        // if (f[index].id == flightID)
+        // {
+        //     exitedFlight = f[index];
+        //     status = find_passenger(exitedFlight, passengerID);
+        // }
+
+        for (int x = 0; x < flightsCount; x++)
         {
-            index++;
-        }
-        if ((f + index)->id == flightID)
-        {
-            exitedFlight = *(f + index);
-            status = find_passenger(exitedFlight, passengerID);
+            if (f[x].id == flightID)
+            {
+                exitedFlight = f[x];
+                status = find_passenger(exitedFlight, passengerID);
+            }
         }
 
         if (status == 0)
         {
-            printf("Not in the Flight!\n\n");
+            printf("\n   -> Not in the Flight!\n\n");
         }
         else if (status == 1)
         {
-            printf("In the queue\n\n");
+            printf("\n   -> In the queue\n\n");
         }
         else if (status == 2)
         {
-            printf("In the stack\n\n");
+            printf("\n   -> In the stack\n\n");
         }
         else
         {
-            printf("Flight not found!");
+            printf("\n   -> Flight not found!\n\n");
         }
 
         printf("------------------------------------------------------\n\n");
@@ -472,14 +495,6 @@ int main(int argc, char const *argv[])
         free_stack(&f[w].boardedPassengers);
     }
     free(f);
-
-    // Test print passenger
-
-    print_passenger(p[1]);
-    printf("\n\n");
-    print_passenger(p[2]);
-    printf("\n\n");
-    print_passenger(p[3]);
 
     return 0;
 }
