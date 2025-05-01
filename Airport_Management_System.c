@@ -441,22 +441,10 @@ int main(int argc, char const *argv[])
         printf(" . Enter Flight ID: ");
         scanf("%d", &flightID);
 
-        // Flight flight = find_flight(f, flightsCount, flightID);
-
         int index;
         int status = 10;
 
         Flight exitedFlight;
-
-        // while (index < flightsCount && f[index].id != flightID)
-        // {
-        //     index++;
-        // }
-        // if (f[index].id == flightID)
-        // {
-        //     exitedFlight = f[index];
-        //     status = find_passenger(exitedFlight, passengerID);
-        // }
 
         for (int x = 0; x < flightsCount; x++)
         {
